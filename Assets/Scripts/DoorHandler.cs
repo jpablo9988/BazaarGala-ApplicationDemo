@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AdaptivePerformance;
 
 public class DoorHandler : MonoBehaviour
 {

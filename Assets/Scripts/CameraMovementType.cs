@@ -1,6 +1,6 @@
 public enum CameraMovementType
 {
-    MOUSE,
-    KEYBOARD,
-    MOBILE
+    MOUSE = 0,
+    KEYBOARD = 1,
+    MOBILE = 2
 }
