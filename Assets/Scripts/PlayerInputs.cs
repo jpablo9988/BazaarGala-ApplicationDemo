@@ -43,7 +43,7 @@ public class PlayerInputs : MonoBehaviour
             }
             if (camType == CameraMovementType.MOUSE)
             {
-                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.lockState = CursorLockMode.Confined;
                 look.Disable();
                 move.Enable();
             }
@@ -96,24 +96,38 @@ public class PlayerInputs : MonoBehaviour
         }
         escape.performed += CheckLockCursor;
         ControlsType = initialControls;
+        Application.focusChanged += CheckLockCursor;
     }
+    private void CheckLockCursor(bool isFocused)
+    {
+        if (!isFocused)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            if (camType == CameraMovementType.MOUSE) mouseRotationController.enabled = isFocused;
+        }
 
+
+    }
     private void CheckLockCursor(InputAction.CallbackContext context)
     {
         if (Cursor.lockState == CursorLockMode.Locked)
         {
             Cursor.lockState = CursorLockMode.None;
+            if (camType == CameraMovementType.MOUSE) mouseRotationController.enabled = false;
         }
     }
 
     private void OnDisable()
     {
         escape.performed -= CheckLockCursor;
+        Application.focusChanged -= CheckLockCursor;
+
         move.Disable();
         look.Disable();
         escape.Disable();
         dropdownRef.onValueChanged.RemoveListener(ChangeControls);
         Cursor.lockState = CursorLockMode.None;
+
     }
     public void ChangeControls(int controlsChange)
     {
@@ -162,7 +176,6 @@ public class PlayerInputs : MonoBehaviour
     }
     public void CheckIfUIClicked(Mouse mouse)
     {
-        Debug.Log("clicked");
         if (Cursor.lockState == CursorLockMode.Locked || camType != CameraMovementType.MOUSE) return;
         PointerEventData eData = new(EventSystem.current)
         {
@@ -175,14 +188,14 @@ public class PlayerInputs : MonoBehaviour
         {
             if (raycast.gameObject.layer == UILayer)
             {
-                Debug.Log("true");
                 isUnderUI = true;
                 break;
             }
         }
         if (!isUnderUI)
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.lockState = CursorLockMode.Locked;
+            if (camType == CameraMovementType.MOUSE) mouseRotationController.enabled = true;
         }
     }
 }
